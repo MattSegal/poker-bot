@@ -1,5 +1,9 @@
 """
 GUI for simple display and commands for poker bot
+--> trivial alteration for Git tutorial
+--> a second trivial alteration
+--> MORE CHANGES!!
+--> BAHAHA
 """
 from Tkinter import *
 from getInput import getInput

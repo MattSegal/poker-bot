@@ -1,0 +1,12 @@
+# tells git what files to ignore
+*.pyc
+*.py~
+*.~
+*~
+*.swp
+*.png
+*.txt
+*.csv
+*.jpeg
+*/
+
