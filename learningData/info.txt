@@ -1,0 +1,23 @@
+re do theta files for
+	suit
+	hole card (not yet)
+	community cards (not yet)
+
+THETA FILES
+
+all theta files are organised with columns as:
+theta mu sigma
+all X values must be normalised before being classified
+the digitsTheta.csv file uses the following column format:
+theta0, theta1,...,thetaN,mu0,mu1,...,muN,sigma0,sigma1,...,sigmaN
+
+CLASSIFICATION
+
+hole and community cards were classified by the row x column sum of R B G respecitvely
+that makes 3 features per input
+they were classified using binary logistic regression to tell them apart from
+scenarios where there were no cards
+
+digits were classified based on sum of each row and column (16 features per img)
+these images were preprocessed into binary form before classification
+this is a one vs all classification
