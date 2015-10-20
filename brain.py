@@ -1,6 +1,6 @@
 """
 GUI for simple display and commands for poker bot
---> trivial alteration for Git tutorial
+--> trivial alteration for a Git tutorial
 --> a second trivial alteration
 --> MORE CHANGES!!
 --> BAHAHA

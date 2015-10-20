@@ -20,14 +20,15 @@ from inputElements import TableInfo
 from plotFigure import plotFigure
 from readElements import readElements
 
+NUM_PLAYERS = 6
+
 def getInput():
     # ===== initialise ===== #
     startTime = time.time()
-    numPlayers  = 6
 
     img		= LoadImages()
-    tableReg    = TableReg(numPlayers)
-    tableInfo   = TableInfo(numPlayers)
+    tableReg    = TableReg(NUM_PLAYERS)
+    tableInfo   = TableInfo(NUM_PLAYERS)
     # time ~ 0.01 s
     try:
 	(img.window,found) = getWindowImage(img.siteLogo)
@@ -38,7 +39,7 @@ def getInput():
 	    runTime = int(1000*(time.time()-startTime))
 	    return False,runTime
     # time ~ 0.6s - most of the search time is spent finding the table
-    tableReg	= getElementImages(tableReg,img.window,numPlayers)
+    tableReg	= getElementImages(tableReg,img.window,NUM_PLAYERS)
     tableInfo	= readElements(tableInfo,tableReg)
     runTime	= int(1000*(time.time()-startTime))
     # time ~ 0.9s
