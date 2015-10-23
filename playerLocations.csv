@@ -1,0 +1,8 @@
+#,name,name,name,name,stack,stack,stack,stack,tableCard,tableCard,tableCard,tableCard,holeOne,holeOne,holeOne,holeOne,holeTwo,holeTwo,holeTwo,holeTwo,dealer,dealer,dealer,dealer,bet,bet,bet,bet
+#player,row,column,width,height,row,column,width,height,row,column,width,height,row,column,width,height,row,column,width,height,row,column,width,height,row,column,width,height
+1,11,242,87,18,30,242,87,17,104,221,27,32,33,176,13,33,37,194,13,33,112,188,22,24,121,267,160,26
+2,249,26,87,18,268,26,87,17,202,137,27,32,179,52,13,33,185,70,13,33,236,129,22,24,226,181,100,24
+3,352,244,87,18,371,244,87,17,277,221,27,32,334,176,13,33,338,194,13,33,307,257,22,24,279,266,160,24
+4,352,463,87,18,371,463,87,17,277,540,27,32,331,564,13,33,338,582,13,33,284,585,22,24,279,380,160,24
+5,249,680,87,18,268,680,87,17,202,614,27,32,179,688,13,33,183,706,13,33,169,630,22,24,226,508,100,24
+6,11,463,87,18,30,463,87,17,104,540,27,32,30,564,13,33,35,582,13,33,83,494,22,24,121,393,145,26
