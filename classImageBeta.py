@@ -10,7 +10,7 @@ contains:
     loadTrainingData
     saveResults
     loadResults
-    buildTrainExArr
+    buildTrainingExampleArray
     classifyImage
 
 """
@@ -103,21 +103,24 @@ def collateResults(imageType,imageSpecs):
 
 class ImageSpecs:
     def __init__(self,image_type):
-	"""
-	loads and returns image specs from .csv file
-	"""
-	location = './classifyImageInfo/'
-	fileName = image_type+'.csv'
-	DIR = os.path.normpath(location+fileName)
+    	"""
+    	loads and returns image specs from .csv file
+    	"""
+        location = './classifyImageInfo/'
+        fileName = image_type+'.csv'
+        DIR = os.path.normpath(location+fileName)
 
-	specs = np.genfromtxt(DIR, delimiter=',',dtype=int)
-	
-	self.dataLocation   = DATA_LOCATION + image_type+'/'
-	self.numRow	    = specs[0]
-	self.numCol	    = specs[1]
-	self.numCat	    = specs[2]
-	self.catNames	    = specs[3:].astype(str)
-	self.numFeat	    = self.numRow+self.numCol
+        specs = np.genfromtxt(DIR, delimiter=',',dtype=str)
+        print 'debug'
+        print specs
+
+        self.dataLocation   = DATA_LOCATION + image_type+'/'
+        self.numRow	        = int(specs[2])
+        self.numCol	        = int(specs[3])
+        self.numCat	        = int(specs[4])
+        self.catNames	    = specs[5:].astype(str)
+        self.numFeat	    = self.numRow+self.numCol
+      
 
 # =============================================================================== #
 
@@ -239,7 +242,7 @@ def loadTrainingData(imageSpecs,categoryIndex):
         outcomeArr[index] = 1                   
         readPath = os.path.normpath(DIRpos+'/'+imageName)  
         imgArrRGB = cv.imread(readPath,1) # assume RGB image has been processed already            
-        exampleArr[index,:] = buildTrainExArr(imgArrRGB,imageSpecs)
+        exampleArr[index,:] = buildTrainingExampleArray(imgArrRGB,imageSpecs)
         
     # for each negative category, load negative example features from negative example images
     row = numExamplesPos # start count from here
@@ -251,7 +254,7 @@ def loadTrainingData(imageSpecs,categoryIndex):
             outcomeArr[row] = 0
             readPath = os.path.normpath(DIRneg+'/'+imageName)
             imgArrRGB = cv.imread(readPath,1) # assume RGB image has been processed already 
-            exampleArr[row,:] = buildTrainExArr(imgArrRGB,imageSpecs)
+            exampleArr[row,:] = buildTrainingExampleArray(imgArrRGB,imageSpecs)
             row +=1
 
     return exampleArr,outcomeArr,numTrainEx
@@ -327,8 +330,8 @@ def loadResults(readName,loadForClassify=False):
     #print 'loading parameter file:',readName
     header = open(readName)
     header.readline()#print 'file comment:\t',header.readline()[2:]
-    numCat	    = int(header.readline()[2:].split(',')[1])
-    numFeat	    = int(header.readline()[2:].split(',')[1])
+    numCat          = int(header.readline()[2:].split(',')[1])
+    numFeat	        = int(header.readline()[2:].split(',')[1])
     dataType	    = header.readline()[2:].split(',')[1]
     catNames	    = header.readline()[2:].split(',')[1:]
     dataType	    = dataType[:-1]	# get rid of \n at end
@@ -336,12 +339,13 @@ def loadResults(readName,loadForClassify=False):
     
     # ===== get theta, mu, sigma ===== #
     if loadForClassify:
-        theta   = np.zeros((numFeat+1,numCat))
-        mu      = np.zeros((numFeat+1,numCat))
-        sigma   = np.zeros((numFeat+1,numCat))
+        theta   = np.zeros((numFeat,numCat)) # it looks like digitTheta.csv in learning data includes bias in numFeat
+        mu      = np.zeros((numFeat,numCat))
+        sigma   = np.zeros((numFeat,numCat))
         for c in range(numCat):
-            theta[:,c]  = results[:,c           ] 
-            mu[:,c]     = results[:,c + numCat  ] 
+            print readName
+            theta[:,c]  = results[:,c] 
+            mu[:,c]     = results[:,c + numCat] 
             sigma[:,c]  = results[:,c + 2*numCat]
     else:
         theta   = np.zeros(numFeat)
@@ -356,7 +360,7 @@ def loadResults(readName,loadForClassify=False):
 
 # =============================================================================== #
 
-def buildTrainExArr(imgArr,imageSpecs,isRGB=True):
+def buildTrainingExampleArray(imgArr,imageSpecs,isRGB=True):
     """
     builds the training matrix X
     """
@@ -368,6 +372,7 @@ def buildTrainExArr(imgArr,imageSpecs,isRGB=True):
     if isRGB:
 	imgArr = imgArr[:,:,0]
         imgArr[imgArr>0] = 1
+    print numCol,numRow # -1 -1 ? where do these come from?
     X = np.zeros(numCol+numRow)
     # load features
     for col in range(numCol):
@@ -389,16 +394,17 @@ def classifyImage(imgArr,imgType,parameterName):
 
     imageSpecs = ImageSpecs(imgType) 
 
-    numCol = imageSpecs.numCol
-    numRow = imageSpecs.numRow
+    #numCol = imageSpecs.numCol
+    #numRow = imageSpecs.numRow
    
     # load hypothesis function (theta values)
     path    = os.path.normpath('learningData/'+parameterName)
     (numCat,numFeat,dataType,catNames,theta,mu,sigma) = loadResults(path,loadForClassify=True)
 
     # get X (input data for classfication) from image data
-    X = buildTrainExArr(imgArr,dataType,numCol,numRow,isRGB=False)
-
+    #X = buildTrainingExampleArray(imgArr,dataType,numCol,numRow,isRGB=False)
+    X = buildTrainingExampleArray(imgArr,imageSpecs,isRGB=False)
+    
     # add Xo = 1 into X
     Xcalc       = np.zeros(numFeat) 
     Xcalc[1:]   = X.copy()
@@ -412,7 +418,7 @@ def classifyImage(imgArr,imgType,parameterName):
 
         # generate hypothesis
         yCalcRaw        = np.dot(XcalcCat,theta[:,i])
-        yCalcArr[i]     = sigmoid(yCalcRaw)
+        yCalcArr[i]     = logReg.sigmoid(yCalcRaw)
         
     bestEst = np.where(yCalcArr==yCalcArr.max())[0][0]
     catEst = catNames[bestEst]

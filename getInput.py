@@ -21,26 +21,27 @@ from plotFigure import plotFigure
 from readElements import readElements
 
 NUM_PLAYERS = 6
+DEBUG       = False # use saved image instead of screencap
 
 def getInput():
-    # ===== initialise ===== #
+    # initialise 
     startTime = time.time()
 
-    img		= LoadImages()
-    tableReg    = TableReg(NUM_PLAYERS)
-    tableInfo   = TableInfo(NUM_PLAYERS)
-    # time ~ 0.01 s
+    img             = LoadImages()
+    tableRegions    = TableReg(NUM_PLAYERS)
+    tableInfo       = TableInfo(NUM_PLAYERS)
+    # try find the poker table
     try:
-	(img.window,found) = getWindowImage(img.siteLogo)
+	   (img.window,found) = getWindowImage(img.siteLogo)
     except NoTableError:
-	if __name__ == '__main__':
-	    raise NoTableError('no poker table found')
-	else:
-	    runTime = int(1000*(time.time()-startTime))
-	    return False,runTime
-    # time ~ 0.6s - most of the search time is spent finding the table
-    tableReg	= getElementImages(tableReg,img.window,NUM_PLAYERS)
-    tableInfo	= readElements(tableInfo,tableReg)
+    	if __name__ == '__main__':
+    	    raise NoTableError('no poker table found')
+    	else:
+    	    runTime = int(1000*(time.time()-startTime))
+    	    return False,runTime
+    # most of the search time is spent finding the table (~0.6s)
+    tableRegions    = getElementImages(tableRegions,img.window,NUM_PLAYERS)
+    tableInfo       = readElements(tableInfo,tableRegions)
     runTime	= int(1000*(time.time()-startTime))
     # time ~ 0.9s
     return tableInfo,runTime    
@@ -100,7 +101,14 @@ def getWindowImage(datumImg):
     """
 
     # find the datum image on screen
-    screen = screenCap(BGR=True)
+    if DEBUG:
+        # use an image of a poker table from file
+        import os # bad practice
+        path = 'tableExamples/table1.png'
+        path = os.path.normpath(path)
+        screen = cv.imread(path,1)
+    else: 
+        screen = screenCap(BGR=True)
     datumLoc = findTemplate(datumImg,screen,plotResults=False)
     found = datumLoc[2]
     if found:
