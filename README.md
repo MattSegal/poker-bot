@@ -1,6 +1,6 @@
 # Poker Bot
 
-### Before you read further
+### Before you read the source
 I wrote this code while still learning a lot of basic programming concepts. For those who brave the source I must emplore you not to judge my current work by the swamp of brittle spaghetti you will find within.
 
 ### Overview
